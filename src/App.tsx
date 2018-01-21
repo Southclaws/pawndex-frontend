@@ -146,11 +146,36 @@ class App extends React.Component<Props, State> {
 
                     switch (value.classification) {
                         case "full":
-                            icon = <List.Icon name="github" size="large" verticalAlign="middle" />;
+                            icon = (
+                                <List.Icon
+                                    size="large"
+                                    name="check circle"
+                                    color="yellow"
+                                    verticalAlign="middle"
+                                />
+                            );
                             break;
 
                         case "basic":
-                            icon = <List.Icon name="zip" size="large" verticalAlign="middle" />;
+                            icon = (
+                                <List.Icon
+                                    size="large"
+                                    name="check circle"
+                                    color="teal"
+                                    verticalAlign="middle"
+                                />
+                            );
+                            break;
+
+                        case "buried":
+                            icon = (
+                                <List.Icon
+                                    size="large"
+                                    name="circle outline"
+                                    disabled
+                                    verticalAlign="middle"
+                                />
+                            );
                             break;
 
                         default:
