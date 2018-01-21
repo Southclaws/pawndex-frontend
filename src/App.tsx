@@ -1,5 +1,17 @@
 import * as React from "react";
-import { Grid, Container, Header, Input, Checkbox, Radio, Segment, List } from "semantic-ui-react";
+import {
+    Grid,
+    Container,
+    Header,
+    Input,
+    Checkbox,
+    Radio,
+    Segment,
+    Modal,
+    Button,
+    Icon,
+    List
+} from "semantic-ui-react";
 import * as moment from "moment";
 import * as Fuse from "fuse.js";
 
@@ -224,19 +236,68 @@ class App extends React.Component<Props, State> {
     render() {
         return (
             <Container>
-                <Grid relaxed>
+                <Grid relaxed divided>
                     <Grid.Row />
                     <Grid.Row>
-                        <Grid.Column>
-                            <Header>Pawndex</Header>
+                        <Grid.Column width={6}>
+                            <Header>
+                                Pawndex{" - "}
+                                <Modal trigger={<Button size="tiny">?</Button>}>
+                                    <Modal.Header>Help</Modal.Header>
+                                    <Modal.Content>
+                                        <Modal.Description>
+                                            <p>This index lists valid Pawn packages from GitHub.</p>
+                                            <p>
+                                                The icons indicate the classification of the
+                                                package:
+                                            </p>
+                                            <ul>
+                                                <li>
+                                                    <Icon
+                                                        size="large"
+                                                        name="check circle"
+                                                        color="yellow"
+                                                        verticalAlign="middle"
+                                                    />
+                                                    A full Pawn Package that contains package
+                                                    definition file
+                                                </li>
+                                                <li>
+                                                    <Icon
+                                                        size="large"
+                                                        name="check circle"
+                                                        color="teal"
+                                                        verticalAlign="middle"
+                                                    />
+                                                    Contains .inc or .pwn files at the top-most
+                                                    level, still compatible with{" "}
+                                                    <a href="http://bit.ly/sampctl">sampctl</a>.
+                                                </li>
+                                                <li>
+                                                    <Icon
+                                                        size="large"
+                                                        name="circle outline"
+                                                        disabled
+                                                        verticalAlign="middle"
+                                                    />
+                                                    A repository that contains .inc or .pwn files
+                                                    somewhere, requires user to specify include
+                                                    path.
+                                                </li>
+                                            </ul>
+                                        </Modal.Description>
+                                    </Modal.Content>
+                                </Modal>
+                            </Header>
                             <Container>
                                 An automated list of Pawn Packages from GitHub - fully compatible
                                 with <a href="http://bit.ly/sampctl">sampctl</a>!
                             </Container>
                         </Grid.Column>
+                        <Grid.Column width={6} verticalAlign="bottom" />
                     </Grid.Row>
                     <Grid.Row>
-                        <Grid.Column>
+                        <Grid.Column width={6}>
                             <Input
                                 icon="search"
                                 placeholder="Search..."
@@ -247,7 +308,7 @@ class App extends React.Component<Props, State> {
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row columns={1}>
-                        <Grid.Column width={12}>
+                        <Grid.Column width={4}>
                             <Checkbox
                                 label="Full Packages Only"
                                 onChange={(e, d) => {
@@ -257,7 +318,7 @@ class App extends React.Component<Props, State> {
                                 }}
                             />
                         </Grid.Column>
-                        <Grid.Column width={12}>
+                        <Grid.Column width={4}>
                             <Radio
                                 label="sort by latest"
                                 name="sort"
@@ -266,7 +327,7 @@ class App extends React.Component<Props, State> {
                                 onChange={e => this.onSort("date")}
                             />
                         </Grid.Column>
-                        <Grid.Column width={12}>
+                        <Grid.Column width={4}>
                             <Radio
                                 label="sort by stars"
                                 name="sort"
@@ -275,7 +336,7 @@ class App extends React.Component<Props, State> {
                                 onChange={e => this.onSort("stars")}
                             />
                         </Grid.Column>
-                        <Grid.Column width={12}>
+                        <Grid.Column width={4}>
                             <Radio
                                 label="sort by relevance"
                                 name="sort"
