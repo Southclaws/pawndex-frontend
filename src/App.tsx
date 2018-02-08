@@ -1,37 +1,13 @@
 import * as React from "react";
-import {
-    Grid,
-    Container,
-    Header,
-    Input,
-    Checkbox,
-    Radio,
-    Segment,
-    Modal,
-    Button,
-    Icon,
-    List
-} from "semantic-ui-react";
-import * as moment from "moment";
-import * as Fuse from "fuse.js";
+import { BrowserRouter, Switch, Route, Link, RouteComponentProps } from "react-router-dom";
+import { Grid, Container, Header, Modal, Button, Icon, Loader } from "semantic-ui-react";
 
 import "./App.css";
-
-interface Package {
-    user: string;
-    repo: string;
-    dependencies?: string[];
-    classification: "full" | "basic" | "buried";
-    stars: number;
-    updated: Date;
-}
+import { PackageList } from "./List";
+import { Package, PackageView } from "./Package";
 
 interface Props {}
 interface State {
-    query: string;
-    lastInput: number;
-    fullOnly: boolean;
-    sort: "date" | "stars" | "rel";
     error: string;
     list?: Package[];
 }
@@ -40,10 +16,6 @@ class App extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            query: "",
-            lastInput: 0,
-            fullOnly: false,
-            sort: "date",
             error: "",
             list: undefined
         };
@@ -69,292 +41,109 @@ class App extends React.Component<Props, State> {
         this.setState({ list: list });
     }
 
-    onQuery(query: string) {
-        this.setState({ query: query });
-    }
-
-    onFilter(filter: boolean) {
-        this.setState({ fullOnly: filter });
-    }
-
-    onSort(value: "date" | "stars" | "rel") {
-        this.setState({ sort: value });
-    }
-
-    filterList(list: Package[]) {
-        if (this.state.query !== "") {
-            let fuse = new Fuse(list, {
-                shouldSort: true,
-                threshold: 0.2,
-                location: 0,
-                distance: 1,
-                maxPatternLength: 32,
-                minMatchCharLength: 3,
-                keys: ["user", "repo"]
-            });
-            list = fuse.search(this.state.query);
-        }
-
-        let result = list.filter((value, index, array) => {
-            if (this.state.fullOnly) {
-                return value.classification === "full";
-            } else {
-                return true;
-            }
-        });
-
-        return result;
-    }
-
-    sortList(list: Package[]) {
-        let result;
-
-        switch (this.state.sort) {
-            case "date":
-                result = list.sort((a: Package, b: Package) => {
-                    if (a.updated > b.updated) {
-                        return -1;
-                    } else if (a.updated < b.updated) {
-                        return 1;
-                    }
-                    return 0;
-                });
-                break;
-
-            case "stars":
-                result = list.sort((a: Package, b: Package) => {
-                    if (a.stars > b.stars) {
-                        return -1;
-                    } else if (a.stars < b.stars) {
-                        return 1;
-                    }
-                    return 0;
-                });
-                break;
-
-            default:
-                result = list;
-                break;
-        }
-
-        return result;
-    }
-
-    renderList() {
-        if (this.state.list === undefined) {
-            return this.renderError("Package list has not been loaded");
-        }
-
-        let list = this.sortList(this.filterList(this.state.list));
-
-        return (
-            <List divided relaxed>
-                <List.Item>
-                    <List.Header>{list.length} Packages</List.Header>
-                </List.Item>
-
-                {list.map((value: Package, index: number, array: Package[]) => {
-                    let icon: JSX.Element;
-
-                    switch (value.classification) {
-                        case "full":
-                            icon = (
-                                <List.Icon
-                                    size="large"
-                                    name="check circle"
-                                    color="yellow"
-                                    verticalAlign="middle"
-                                />
-                            );
-                            break;
-
-                        case "basic":
-                            icon = (
-                                <List.Icon
-                                    size="large"
-                                    name="check circle"
-                                    color="teal"
-                                    verticalAlign="middle"
-                                />
-                            );
-                            break;
-
-                        case "buried":
-                            icon = (
-                                <List.Icon
-                                    size="large"
-                                    name="circle outline"
-                                    disabled
-                                    verticalAlign="middle"
-                                />
-                            );
-                            break;
-
-                        default:
-                            icon = <List.Icon />;
-                            break;
-                    }
-
-                    let description =
-                        value.stars + " stars | updated " + moment(value.updated).fromNow();
-
-                    if (value.dependencies !== undefined) {
-                        description +=
-                            " | " +
-                            (value.dependencies.length === 1
-                                ? "1 dependency"
-                                : value.dependencies.length + " dependencies");
-                    }
-
-                    return (
-                        <List.Item key={index}>
-                            {icon}
-                            <List.Content>
-                                <List.Header
-                                    as="a"
-                                    href={"https://github.com/" + value.user + "/" + value.repo}
-                                >
-                                    {value.user}/{value.repo}
-                                </List.Header>
-                                <List.Description>{description}</List.Description>
-                            </List.Content>
-                        </List.Item>
-                    );
-                })}
-            </List>
-        );
-    }
-
-    renderError(message: string) {
-        return (
-            <Segment inverted color="red">
-                <p>{message}</p>
-            </Segment>
-        );
-    }
-
     render() {
         return (
-            <Container>
-                <Grid relaxed divided>
-                    <Grid.Row />
-                    <Grid.Row>
-                        <Grid.Column width={6}>
-                            <Header>
-                                Pawndex{" - "}
-                                <Modal trigger={<Button size="tiny">?</Button>}>
-                                    <Modal.Header>Help</Modal.Header>
-                                    <Modal.Content>
-                                        <Modal.Description>
-                                            <p>This index lists valid Pawn packages from GitHub.</p>
-                                            <p>
-                                                The icons indicate the classification of the
-                                                package:
-                                            </p>
-                                            <ul>
-                                                <li>
-                                                    <Icon
-                                                        size="large"
-                                                        name="check circle"
-                                                        color="yellow"
-                                                        verticalAlign="middle"
-                                                    />
-                                                    A full Pawn Package that contains package
-                                                    definition file
-                                                </li>
-                                                <li>
-                                                    <Icon
-                                                        size="large"
-                                                        name="check circle"
-                                                        color="teal"
-                                                        verticalAlign="middle"
-                                                    />
-                                                    Contains .inc or .pwn files at the top-most
-                                                    level, still compatible with{" "}
-                                                    <a href="http://bit.ly/sampctl">sampctl</a>.
-                                                </li>
-                                                <li>
-                                                    <Icon
-                                                        size="large"
-                                                        name="circle outline"
-                                                        disabled
-                                                        verticalAlign="middle"
-                                                    />
-                                                    A repository that contains .inc or .pwn files
-                                                    somewhere, requires user to specify include
-                                                    path.
-                                                </li>
-                                            </ul>
-                                        </Modal.Description>
-                                    </Modal.Content>
-                                </Modal>
-                            </Header>
-                            <Container>
-                                An automated list of Pawn Packages from GitHub - fully compatible
-                                with <a href="http://bit.ly/sampctl">sampctl</a>!
-                            </Container>
-                        </Grid.Column>
-                        <Grid.Column width={6} verticalAlign="bottom" />
-                    </Grid.Row>
-                    <Grid.Row>
-                        <Grid.Column width={6}>
-                            <Input
-                                icon="search"
-                                placeholder="Search..."
-                                onChange={e => {
-                                    this.onQuery((e.target as HTMLInputElement).value);
-                                }}
+            <BrowserRouter>
+                <Container>
+                    <Grid relaxed divided>
+                        <Grid.Row>
+                            <Grid.Column>
+                                <Header>
+                                    <Link to="/">Pawndex</Link>
+                                    {" - "}
+                                    <Modal trigger={<Button size="tiny">?</Button>}>
+                                        <Modal.Header>Help</Modal.Header>
+                                        <Modal.Content>
+                                            <Modal.Description>
+                                                <p>
+                                                    This index lists valid Pawn packages from
+                                                    GitHub.
+                                                </p>
+                                                <p>
+                                                    The icons indicate the classification of the
+                                                    package:
+                                                </p>
+                                                <ul>
+                                                    <li>
+                                                        <Icon
+                                                            size="large"
+                                                            name="check circle"
+                                                            color="yellow"
+                                                            verticalAlign="middle"
+                                                        />
+                                                        A full Pawn Package that contains package
+                                                        definition file
+                                                    </li>
+                                                    <li>
+                                                        <Icon
+                                                            size="large"
+                                                            name="check circle"
+                                                            color="teal"
+                                                            verticalAlign="middle"
+                                                        />
+                                                        Contains .inc or .pwn files at the top-most
+                                                        level, still compatible with{" "}
+                                                        <a href="http://bit.ly/sampctl">sampctl</a>.
+                                                    </li>
+                                                    <li>
+                                                        <Icon
+                                                            size="large"
+                                                            name="circle outline"
+                                                            disabled
+                                                            verticalAlign="middle"
+                                                        />
+                                                        A repository that contains .inc or .pwn
+                                                        files somewhere, requires user to specify
+                                                        include path.
+                                                    </li>
+                                                </ul>
+                                            </Modal.Description>
+                                        </Modal.Content>
+                                    </Modal>
+                                </Header>
+                                <Container>
+                                    An automated list of Pawn Packages from GitHub - fully
+                                    compatible with <a href="http://bit.ly/sampctl">sampctl</a>!
+                                </Container>
+                            </Grid.Column>
+                        </Grid.Row>
+                        <Switch>
+                            <Route
+                                exact
+                                path="/"
+                                render={() => <PackageList list={this.state.list} />}
                             />
-                        </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row columns={1}>
-                        <Grid.Column width={4}>
-                            <Checkbox
-                                label="Full Packages Only"
-                                onChange={(e, d) => {
-                                    if (d.checked !== undefined) {
-                                        this.onFilter(d.checked);
+                            <Route
+                                path="/:user/:repo"
+                                render={(
+                                    props: RouteComponentProps<{ user: string; repo: string }>
+                                ) => {
+                                    if (this.state.list === undefined) {
+                                        return <Loader active content="Loading" />;
+                                    }
+                                    let target: Package | undefined = undefined;
+                                    for (let index = 0; index < this.state.list.length; index++) {
+                                        const pkg = this.state.list[index];
+
+                                        if (
+                                            pkg.user === props.match.params.user &&
+                                            pkg.repo === props.match.params.repo
+                                        ) {
+                                            target = pkg;
+                                            break;
+                                        }
+                                    }
+                                    if (target !== undefined) {
+                                        return <PackageView pkg={target} />;
+                                    } else {
+                                        return <Loader active content="Loading" />;
                                     }
                                 }}
                             />
-                        </Grid.Column>
-                        <Grid.Column width={4}>
-                            <Radio
-                                label="sort by latest"
-                                name="sort"
-                                value="date"
-                                checked={this.state.sort === "date"}
-                                onChange={e => this.onSort("date")}
-                            />
-                        </Grid.Column>
-                        <Grid.Column width={4}>
-                            <Radio
-                                label="sort by stars"
-                                name="sort"
-                                value="stars"
-                                checked={this.state.sort === "stars"}
-                                onChange={e => this.onSort("stars")}
-                            />
-                        </Grid.Column>
-                        <Grid.Column width={4}>
-                            <Radio
-                                label="sort by relevance"
-                                name="sort"
-                                value="rel"
-                                checked={this.state.sort === "rel"}
-                                onChange={e => this.onSort("rel")}
-                            />
-                        </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                        <Grid.Column>
-                            {this.state.error !== ""
-                                ? this.renderError(this.state.error)
-                                : this.renderList()}
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-            </Container>
+                        </Switch>
+                    </Grid>
+                </Container>
+            </BrowserRouter>
         );
     }
 }
