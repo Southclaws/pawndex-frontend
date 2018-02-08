@@ -70,15 +70,13 @@ export class PackageView extends React.Component<Props, State> {
         let visited = new Object();
 
         let recurse = (pkgName: string, depth: number) => {
-            if (visited[pkgName] === true) {
-                console.log("visited", pkgName);
+            if (visited[pkgName] !== true) {
+                result.nodes.push({
+                    id: pkgName,
+                    group: depth++
+                });
+                visited[pkgName] = true;
             }
-            result.nodes.push({
-                id: pkgName,
-                group: depth++
-            });
-
-            console.log("DEPTH", depth, "Adding", pkgName);
 
             let pkg = this.pkgFromName(pkgName);
             if (pkg === undefined || pkg.dependencies === undefined) {
@@ -100,8 +98,6 @@ export class PackageView extends React.Component<Props, State> {
 
         recurse(this.props.pkg.user + "/" + this.props.pkg.repo, 0);
 
-        console.log(result);
-
         return result;
     }
 
@@ -113,10 +109,10 @@ export class PackageView extends React.Component<Props, State> {
         let graph = <p>No graph for this package.</p>;
         let tree = this.buildTree();
         if (tree !== undefined) {
-            console.log("gra");
             graph = (
                 <InteractiveForceGraph
                     simulationOptions={{
+                        strengh: 0.1,
                         animate: true,
                         height: 400,
                         width: 400,
@@ -126,8 +122,8 @@ export class PackageView extends React.Component<Props, State> {
                     {tree.nodes.map((value: GraphNode, index: number, array: GraphNode[]) => {
                         let r = index === 0 ? 10 : 7.5;
                         r -= value.group;
-                        if (r < 1) {
-                            r = 1;
+                        if (r < 2) {
+                            r = 2;
                         }
 
                         let h = Math.random() * 360;
@@ -135,16 +131,8 @@ export class PackageView extends React.Component<Props, State> {
                         let l = 60 - value.group * 10;
                         let fill = `hsl(${h}, ${s}%, ${l}%)`;
 
-                        console.log(fill);
-
                         return (
-                            <ForceGraphNode
-                                key={index}
-                                node={{ id: value.id }}
-                                fill={fill}
-                                r={r}
-                                opacity={100 - value.group * 10}
-                            />
+                            <ForceGraphNode key={index} node={{ id: value.id }} fill={fill} r={r} />
                         );
                     })}
                     {tree.links.map((value: GraphLink, index: number, array: GraphLink[]) => {

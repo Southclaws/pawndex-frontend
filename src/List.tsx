@@ -165,12 +165,6 @@ export class PackageList extends React.Component<Props, State> {
                     let url = "https://github.com/" + value.user + "/" + value.repo;
                     let descriptionText =
                         value.stars + " stars | updated " + moment(value.updated).fromNow();
-                    let description = (
-                        <p>
-                            <a href={url}>View on GitHub | </a>
-                            {descriptionText}
-                        </p>
-                    );
 
                     if (value.dependencies !== undefined) {
                         descriptionText +=
@@ -179,6 +173,12 @@ export class PackageList extends React.Component<Props, State> {
                                 ? "1 dependency"
                                 : value.dependencies.length + " dependencies");
                     }
+                    let description = (
+                        <p>
+                            <a href={url}>View on GitHub | </a>
+                            {descriptionText}
+                        </p>
+                    );
 
                     return (
                         <List.Item key={index}>
