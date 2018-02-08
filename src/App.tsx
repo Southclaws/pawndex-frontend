@@ -46,6 +46,7 @@ class App extends React.Component<Props, State> {
             <BrowserRouter>
                 <Container>
                     <Grid relaxed divided>
+                        <Grid.Row />
                         <Grid.Row>
                             <Grid.Column>
                                 <Header>
@@ -134,7 +135,7 @@ class App extends React.Component<Props, State> {
                                         }
                                     }
                                     if (target !== undefined) {
-                                        return <PackageView pkg={target} />;
+                                        return <PackageView pkg={target} all={this.state.list} />;
                                     } else {
                                         return <Loader active content="Loading" />;
                                     }
