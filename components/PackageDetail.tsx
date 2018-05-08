@@ -182,17 +182,19 @@ export default class extends React.Component<Props, State> {
                                 View on <Icon name="github" size="large" />
                             </a>
                         </p>
-                        {this.props.pkg.dependencies === undefined ? null : (
-                            <p>
-                                {`Depends on ${
-                                    this.props.pkg.dependencies.length
-                                } packages`}
-                            </p>
-                        )}
+                        <p>
+                            {this.props.pkg.dependencies === undefined
+                                ? "No dependencies listed"
+                                : `Depends on ${
+                                      this.props.pkg.dependencies.length
+                                  } packages`}
+                        </p>
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
-                    <Grid.Column>{graph}</Grid.Column>
+                    {this.props.pkg.dependencies === undefined ? null : (
+                        <Grid.Column>{graph}</Grid.Column>
+                    )}
                 </Grid.Row>
             </Grid>
         );
