@@ -11,7 +11,7 @@ import {
 import * as moment from "moment";
 import * as Fuse from "fuse.js";
 
-import { Package } from "./Package";
+import { Package } from "../types/Package";
 
 interface Props {
     list?: Package[];

@@ -77,13 +77,23 @@ class Index extends React.Component<Props, State> {
                         </Grid.Column>
                     </Grid.Row>
                     <PackageList list={this.state.list} />
-                    <Modal
-                        open={target !== undefined}
-                        closeIcon={true}
-                        onClose={() => (window.location.href = "/")}
-                    >
-                        <PackageDetail pkg={target} all={this.state.list} />
-                    </Modal>
+                    {target === undefined ? null : (
+                        <Modal
+                            open={target !== undefined}
+                            closeIcon={true}
+                            onClose={() => (window.location.href = "/")}
+                        >
+                            <Modal.Header
+                                content={target.user + "/" + target.repo}
+                            />
+                            <Modal.Content>
+                                <PackageDetail
+                                    pkg={target}
+                                    all={this.state.list}
+                                />
+                            </Modal.Content>
+                        </Modal>
+                    )}
                 </Grid>
             </Container>
         );

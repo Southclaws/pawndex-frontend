@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Grid, Loader, Header } from "semantic-ui-react";
+import { Grid, Loader, Icon } from "semantic-ui-react";
+import * as moment from "moment";
 import {
     InteractiveForceGraph,
     ForceGraphNode,
@@ -168,14 +169,26 @@ export default class extends React.Component<Props, State> {
             <Grid>
                 <Grid.Row>
                     <Grid.Column>
-                        <Header>
-                            {this.props.pkg.user}/{this.props.pkg.repo}
-                        </Header>
-                        Depends on{" "}
-                        {this.props.pkg.dependencies === undefined
-                            ? 0
-                            : this.props.pkg.dependencies.length}{" "}
-                        packages.
+                        <p>
+                            {`${this.props.pkg.stars} stars, updated ${moment(
+                                this.props.pkg.updated
+                            ).fromNow()}`}
+                            {" - "}
+                            <a
+                                href={`https://github.com/${
+                                    this.props.pkg.user
+                                }/${this.props.pkg.repo}`}
+                            >
+                                View on <Icon name="github" size="large" />
+                            </a>
+                        </p>
+                        {this.props.pkg.dependencies === undefined ? null : (
+                            <p>
+                                {`Depends on ${
+                                    this.props.pkg.dependencies.length
+                                } packages`}
+                            </p>
+                        )}
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
