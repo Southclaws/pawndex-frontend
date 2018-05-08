@@ -1,6 +1,13 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
-import { Grid, Input, Checkbox, Radio, List, Segment, Loader } from "semantic-ui-react";
+import {
+    Grid,
+    Input,
+    Checkbox,
+    Radio,
+    List,
+    Segment,
+    Loader
+} from "semantic-ui-react";
 import * as moment from "moment";
 import * as Fuse from "fuse.js";
 
@@ -17,7 +24,7 @@ interface State {
     sort: "date" | "stars" | "rel";
 }
 
-export class PackageList extends React.Component<Props, State> {
+export default class PackageList extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -162,9 +169,12 @@ export class PackageList extends React.Component<Props, State> {
                             break;
                     }
 
-                    let url = "https://github.com/" + value.user + "/" + value.repo;
+                    let url =
+                        "https://github.com/" + value.user + "/" + value.repo;
                     let descriptionText =
-                        value.stars + " stars | updated " + moment(value.updated).fromNow();
+                        value.stars +
+                        " stars | updated " +
+                        moment(value.updated).fromNow();
 
                     if (value.dependencies !== undefined) {
                         descriptionText +=
@@ -185,11 +195,13 @@ export class PackageList extends React.Component<Props, State> {
                             {icon}
                             <List.Content>
                                 <List.Header>
-                                    <Link to={value.user + "/" + value.repo}>
+                                    <a href={value.user + "/" + value.repo}>
                                         {value.user}/{value.repo}
-                                    </Link>
+                                    </a>
                                 </List.Header>
-                                <List.Description>{description}</List.Description>
+                                <List.Description>
+                                    {description}
+                                </List.Description>
                             </List.Content>
                         </List.Item>
                     );
@@ -207,7 +219,9 @@ export class PackageList extends React.Component<Props, State> {
                             icon="search"
                             placeholder="Search..."
                             onChange={e => {
-                                this.onQuery((e.target as HTMLInputElement).value);
+                                this.onQuery(
+                                    (e.target as HTMLInputElement).value
+                                );
                             }}
                         />
                     </Grid.Column>

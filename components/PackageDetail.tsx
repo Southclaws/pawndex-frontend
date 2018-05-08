@@ -1,15 +1,12 @@
 import * as React from "react";
 import { Grid, Loader, Header } from "semantic-ui-react";
-import { InteractiveForceGraph, ForceGraphNode, ForceGraphArrowLink } from "react-vis-force";
+import {
+    InteractiveForceGraph,
+    ForceGraphNode,
+    ForceGraphArrowLink
+} from "react-vis-force";
 
-export interface Package {
-    user: string;
-    repo: string;
-    dependencies?: string[];
-    classification: "full" | "basic" | "buried";
-    stars: number;
-    updated: Date;
-}
+import { Package } from "../types/Package";
 
 interface GraphNode {
     id: string;
@@ -29,17 +26,17 @@ interface GraphData {
 
 interface Props {
     pkg?: Package;
-    all: Package[];
+    all?: Package[];
 }
 interface State {}
 
-export class PackageView extends React.Component<Props, State> {
+export default class extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {};
     }
 
-    pkgFromName(name: string): Package | undefined {
+    pkgFromName(name: string, list: Package[]): Package | undefined {
         let split = name.split("/");
         if (split.length !== 2) {
             return undefined;
@@ -48,8 +45,8 @@ export class PackageView extends React.Component<Props, State> {
         let user = split[0];
         let repo = split[1];
 
-        for (let index = 0; index < this.props.all.length; index++) {
-            const element = this.props.all[index];
+        for (let index = 0; index < list.length; index++) {
+            const element = list[index];
             if (element.user === user && element.repo === repo) {
                 return element;
             }
@@ -57,7 +54,7 @@ export class PackageView extends React.Component<Props, State> {
         return undefined;
     }
 
-    buildTree(): GraphData | undefined {
+    buildTree(list: Package[]): GraphData | undefined {
         if (this.props.pkg === undefined) {
             return undefined;
         }
@@ -78,7 +75,7 @@ export class PackageView extends React.Component<Props, State> {
                 visited[pkgName] = true;
             }
 
-            let pkg = this.pkgFromName(pkgName);
+            let pkg = this.pkgFromName(pkgName, list);
             if (pkg === undefined || pkg.dependencies === undefined) {
                 return;
             }
@@ -102,12 +99,12 @@ export class PackageView extends React.Component<Props, State> {
     }
 
     render() {
-        if (this.props.pkg === undefined) {
+        if (this.props.pkg === undefined || this.props.all === undefined) {
             return <Loader active content="Loading" />;
         }
 
         let graph = <p>No graph for this package.</p>;
-        let tree = this.buildTree();
+        let tree = this.buildTree(this.props.all);
         if (tree !== undefined) {
             graph = (
                 <InteractiveForceGraph
@@ -119,30 +116,50 @@ export class PackageView extends React.Component<Props, State> {
                         radiusMargin: 100
                     }}
                 >
-                    {tree.nodes.map((value: GraphNode, index: number, array: GraphNode[]) => {
-                        let r = index === 0 ? 10 : 7.5;
-                        r -= value.group;
-                        if (r < 2) {
-                            r = 2;
+                    {tree.nodes.map(
+                        (
+                            value: GraphNode,
+                            index: number,
+                            array: GraphNode[]
+                        ) => {
+                            let r = index === 0 ? 10 : 7.5;
+                            r -= value.group;
+                            if (r < 2) {
+                                r = 2;
+                            }
+
+                            let h = Math.random() * 360;
+                            let s = 80 - value.group * 20;
+                            let l = 60 - value.group * 10;
+                            let fill = `hsl(${h}, ${s}%, ${l}%)`;
+
+                            return (
+                                <ForceGraphNode
+                                    key={index}
+                                    node={{ id: value.id }}
+                                    fill={fill}
+                                    r={r}
+                                />
+                            );
                         }
-
-                        let h = Math.random() * 360;
-                        let s = 80 - value.group * 20;
-                        let l = 60 - value.group * 10;
-                        let fill = `hsl(${h}, ${s}%, ${l}%)`;
-
-                        return (
-                            <ForceGraphNode key={index} node={{ id: value.id }} fill={fill} r={r} />
-                        );
-                    })}
-                    {tree.links.map((value: GraphLink, index: number, array: GraphLink[]) => {
-                        return (
-                            <ForceGraphArrowLink
-                                key={index}
-                                link={{ source: value.source, target: value.target }}
-                            />
-                        );
-                    })}
+                    )}
+                    {tree.links.map(
+                        (
+                            value: GraphLink,
+                            index: number,
+                            array: GraphLink[]
+                        ) => {
+                            return (
+                                <ForceGraphArrowLink
+                                    key={index}
+                                    link={{
+                                        source: value.source,
+                                        target: value.target
+                                    }}
+                                />
+                            );
+                        }
+                    )}
                 </InteractiveForceGraph>
             );
         }
@@ -168,5 +185,3 @@ export class PackageView extends React.Component<Props, State> {
         );
     }
 }
-
-export default PackageView;
