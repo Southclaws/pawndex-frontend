@@ -25,7 +25,7 @@ class Index extends React.Component<Props, State> {
     async componentDidMount() {
         let resp: Response;
         try {
-            resp = await fetch("http://list.packages.sampctl.com");
+            resp = await fetch("//list.packages.sampctl.com");
         } catch (e) {
             this.setState({ error: (e as Error).message });
             return;

@@ -13,7 +13,7 @@ run:
 	-docker rm pawndex-frontend
 	docker run \
 		--name pawndex-frontend \
-		-p 3000:80 \
+		-p 3000:3000 \
 		-d \
 		southclaws/pawndex-frontend:$(VERSION)
 
