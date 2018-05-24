@@ -16,13 +16,3 @@ run:
 		-p 3000:3000 \
 		-d \
 		southclaws/pawndex-frontend:$(VERSION)
-
-run-prod:
-	-docker kill pawndex-frontend
-	-docker rm pawndex-frontend
-	docker run \
-		--name pawndex-frontend \
-		--restart on-failure \
-		-p 7794:80 \
-		-d \
-		southclaws/pawndex-frontend:$(VERSION)
