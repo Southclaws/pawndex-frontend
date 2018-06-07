@@ -1,5 +1,12 @@
 import * as React from "react";
-import { Grid, Loader, Icon, Dropdown, Label } from "semantic-ui-react";
+import {
+    Grid,
+    Loader,
+    Icon,
+    Dropdown,
+    DropdownProps,
+    Label
+} from "semantic-ui-react";
 import * as moment from "moment";
 import {
     InteractiveForceGraph,
@@ -29,7 +36,9 @@ interface Props {
     pkg?: Package;
     all?: Package[];
 }
-interface State {}
+interface State {
+    selectedVersion?: string;
+}
 
 export default class extends React.Component<Props, State> {
     constructor(props: Props) {
@@ -165,6 +174,25 @@ export default class extends React.Component<Props, State> {
             );
         }
 
+        let selectedVersion: string | undefined;
+        if (this.state.selectedVersion !== undefined) {
+            selectedVersion = this.state.selectedVersion;
+        } else if (this.props.pkg.tags !== null) {
+            selectedVersion = this.props.pkg.tags[0];
+        }
+
+        let dropdownTags: {
+            text: string;
+            value: string;
+        }[] = this.props.pkg.tags.map(
+            (value: string, index: number, array: string[]) => {
+                return {
+                    text: value,
+                    value: value
+                };
+            }
+        );
+
         return (
             <Grid>
                 <Grid.Row>
@@ -184,25 +212,21 @@ export default class extends React.Component<Props, State> {
                         </p>
                         {this.props.pkg.tags === null ? null : (
                             <p>
-                                Latest version:{" "}
-                                <Label>
-                                    <Icon name="tag" />
-                                    {this.props.pkg.tags[0]}
-                                </Label>
-                                {" - "}
+                                Version:{" "}
                                 <Dropdown
-                                    placeholder="Older versions..."
-                                    options={this.props.pkg.tags.map(
-                                        (
-                                            value: string,
-                                            index: number,
-                                            array: string[]
-                                        ) => {
-                                            return {
-                                                text: value
-                                            };
-                                        }
-                                    )}
+                                    inline
+                                    defaultValue={dropdownTags[0].value}
+                                    onChange={(
+                                        event: React.SyntheticEvent<
+                                            HTMLElement
+                                        >,
+                                        data: DropdownProps
+                                    ) => {
+                                        this.setState({
+                                            selectedVersion: data.value as string
+                                        });
+                                    }}
+                                    options={dropdownTags}
                                 />
                             </p>
                         )}
@@ -215,8 +239,8 @@ export default class extends React.Component<Props, State> {
                                 {`sampctl package install ${
                                     this.props.pkg.user
                                 }/${this.props.pkg.repo}` +
-                                    (this.props.pkg.tags !== null
-                                        ? ":" + this.props.pkg.tags[0]
+                                    (selectedVersion !== undefined
+                                        ? ":" + selectedVersion
                                         : "")}
                             </Label>
                         </p>
