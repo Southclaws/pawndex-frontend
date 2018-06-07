@@ -15,6 +15,7 @@ import { Package } from "../types/Package";
 
 interface Props {
     list?: Package[];
+    onClick: Function;
 }
 interface State {
     error: string;
@@ -190,12 +191,18 @@ export default class PackageList extends React.Component<Props, State> {
                         </p>
                     );
 
+                    let route = "/" + value.user + "/" + value.repo;
+
                     return (
                         <List.Item key={index}>
                             {icon}
                             <List.Content>
                                 <List.Header>
-                                    <a href={value.user + "/" + value.repo}>
+                                    <a
+                                        onClick={() => {
+                                            this.props.onClick(route);
+                                        }}
+                                    >
                                         {value.user}/{value.repo}
                                     </a>
                                 </List.Header>

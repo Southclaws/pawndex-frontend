@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Grid, Container, Header, Modal } from "semantic-ui-react";
 import { withRouter } from "next/router";
+import Router from "next/router";
 
 import { PackageList, PackageDetail, HelpModal } from "../components";
 import { Package } from "../types/Package";
@@ -25,7 +26,9 @@ class Index extends React.Component<Props, State> {
     async componentDidMount() {
         let resp: Response;
         try {
-            resp = await fetch("//list.packages.sampctl.com");
+            //resp = await fetch("//list.packages.sampctl.com");
+            let fix;
+            resp = await fetch("//localhost:8080");
         } catch (e) {
             this.setState({ error: (e as Error).message });
             return;
@@ -76,12 +79,17 @@ class Index extends React.Component<Props, State> {
                             </Container>
                         </Grid.Column>
                     </Grid.Row>
-                    <PackageList list={this.state.list} />
+                    <PackageList
+                        list={this.state.list}
+                        onClick={(route: string) => {
+                            Router.push(route);
+                        }}
+                    />
                     {target === undefined ? null : (
                         <Modal
                             open={target !== undefined}
                             closeIcon={true}
-                            onClose={() => (window.location.href = "/")}
+                            onClose={() => Router.push("/")}
                         >
                             <Modal.Header
                                 content={target.user + "/" + target.repo}
