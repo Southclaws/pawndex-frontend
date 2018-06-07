@@ -5,4 +5,6 @@ export interface Package {
     classification: "full" | "basic" | "buried";
     stars: number;
     updated: Date;
+    topics: string[];
+    tags: string[];
 }

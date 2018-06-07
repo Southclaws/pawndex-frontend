@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Grid, Loader, Icon } from "semantic-ui-react";
+import { Grid, Loader, Icon, Dropdown, Label } from "semantic-ui-react";
 import * as moment from "moment";
 import {
     InteractiveForceGraph,
@@ -181,6 +181,44 @@ export default class extends React.Component<Props, State> {
                             >
                                 View on <Icon name="github" size="large" />
                             </a>
+                        </p>
+                        {this.props.pkg.tags === null ? null : (
+                            <p>
+                                Latest version:{" "}
+                                <Label>
+                                    <Icon name="tag" />
+                                    {this.props.pkg.tags[0]}
+                                </Label>
+                                {" - "}
+                                <Dropdown
+                                    placeholder="Older versions..."
+                                    options={this.props.pkg.tags.map(
+                                        (
+                                            value: string,
+                                            index: number,
+                                            array: string[]
+                                        ) => {
+                                            return {
+                                                text: value
+                                            };
+                                        }
+                                    )}
+                                />
+                            </p>
+                        )}
+                        <p>
+                            <Label style={{ fontFamily: "monospace" }}>
+                                <img
+                                    src="http://sampctl.com/sampctl-icon.png"
+                                    style={{ marginRight: 10 }}
+                                />
+                                {`sampctl package install ${
+                                    this.props.pkg.user
+                                }/${this.props.pkg.repo}` +
+                                    (this.props.pkg.tags !== null
+                                        ? ":" + this.props.pkg.tags[0]
+                                        : "")}
+                            </Label>
                         </p>
                         <p>
                             {this.props.pkg.dependencies === undefined
