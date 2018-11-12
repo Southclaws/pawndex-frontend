@@ -9,9 +9,6 @@ WORKDIR /frontend
 COPY . .
 
 RUN yarn build
-
-# nginx
-
-FROM southclaws/nginx-spa as run
-COPY --from=build /frontend/build /app
 EXPOSE 3000
+
+ENTRYPOINT [ "yarn", "start" ]
