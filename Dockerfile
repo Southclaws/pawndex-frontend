@@ -1,11 +1,17 @@
-FROM node:alpine
+FROM node as build
 
+ENV NPM_CONFIG_LOGLEVEL warn
 ARG app_env
 ENV APP_ENV $app_env
 
+RUN mkdir -p /frontend
 WORKDIR /frontend
 COPY . .
-RUN npm install && npm run build
 
-EXPOSE 80
-ENTRYPOINT [ "npm", "run", "start" ]
+RUN yarn build
+
+# nginx
+
+FROM southclaws/nginx-spa as run
+COPY --from=build /frontend/build /app
+EXPOSE 3000

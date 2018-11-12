@@ -1,0 +1,15 @@
+sudo: required
+notifications:
+  email: false
+services:
+  - docker
+language: node_js
+node_js:
+  - stable
+script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - make build
+  - make push
+branches:
+  only:
+    - master

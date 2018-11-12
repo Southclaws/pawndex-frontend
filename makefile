@@ -1,4 +1,4 @@
-VERSION := $(shell cat VERSION)
+VERSION := $(shell git describe --always --tags --dirty)
 
 build:
 	docker build -t southclaws/pawndex-frontend:$(VERSION) \
