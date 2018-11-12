@@ -26,7 +26,7 @@ class Index extends React.Component<Props, State> {
     async componentDidMount() {
         let resp: Response;
         try {
-            resp = await fetch("//list.packages.sampctl.com");
+            resp = await fetch("//api.sampctl.com");
         } catch (e) {
             this.setState({ error: (e as Error).message });
             return;
@@ -49,10 +49,7 @@ class Index extends React.Component<Props, State> {
             for (let index = 0; index < this.state.list.length; index++) {
                 const pkg = this.state.list[index];
 
-                if (
-                    pkg.user === this.props.router.query.user &&
-                    pkg.repo === this.props.router.query.repo
-                ) {
+                if (pkg.user === this.props.router.query.user && pkg.repo === this.props.router.query.repo) {
                     target = pkg;
                     break;
                 }
@@ -71,8 +68,7 @@ class Index extends React.Component<Props, State> {
                                 <HelpModal />
                             </Header>
                             <Container>
-                                An automated list of Pawn Packages from GitHub -
-                                fully compatible with{" "}
+                                An automated list of Pawn Packages from GitHub - fully compatible with{" "}
                                 <a href="http://bit.ly/sampctl">sampctl</a>!
                             </Container>
                         </Grid.Column>
@@ -84,19 +80,10 @@ class Index extends React.Component<Props, State> {
                         }}
                     />
                     {target === undefined ? null : (
-                        <Modal
-                            open={target !== undefined}
-                            closeIcon={true}
-                            onClose={() => Router.push("/")}
-                        >
-                            <Modal.Header
-                                content={target.user + "/" + target.repo}
-                            />
+                        <Modal open={target !== undefined} closeIcon={true} onClose={() => Router.push("/")}>
+                            <Modal.Header content={target.user + "/" + target.repo} />
                             <Modal.Content>
-                                <PackageDetail
-                                    pkg={target}
-                                    all={this.state.list}
-                                />
+                                <PackageDetail pkg={target} all={this.state.list} />
                             </Modal.Content>
                         </Modal>
                     )}
