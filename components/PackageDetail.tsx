@@ -236,12 +236,13 @@ export default class extends React.Component<Props, State> {
                                     src="http://sampctl.com/sampctl-icon.png"
                                     style={{ marginRight: 10 }}
                                 />
-                                {`sampctl package install ${
+                                <span style="-webkit-user-select: all; -moz-user-select: all; -ms-user-select: all; user-select: all;">{`sampctl package install ${
                                     this.props.pkg.user
                                 }/${this.props.pkg.repo}` +
                                     (selectedVersion !== undefined
                                         ? ":" + selectedVersion
                                         : "")}
+                                </span>
                             </Label>
                         </p>
                         <p>
