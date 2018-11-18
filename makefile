@@ -1,18 +1,17 @@
-VERSION := $(shell git describe --always --tags --dirty)
+VERSION := $(shell git describe --tags --dirty --always)
+SERVICE := $(shell basename $(shell pwd))
+OWNER := southclaws
+LDFLAGS := -ldflags "-X main.version=$(VERSION)"
+-include .env
+
+# -
+# Docker
+# -
 
 build:
-	docker build -t southclaws/pawndex-frontend:$(VERSION) \
-		--build-arg app_env=production \
-		.
+	docker build --no-cache -t $(OWNER)/$(SERVICE):$(VERSION) .
 
 push:
-	docker push southclaws/pawndex-frontend:$(VERSION) 
-
-run:
-	-docker kill pawndex-frontend
-	-docker rm pawndex-frontend
-	docker run \
-		--name pawndex-frontend \
-		-p 3000:3000 \
-		-d \
-		southclaws/pawndex-frontend:$(VERSION)
+	docker push $(OWNER)/$(SERVICE):$(VERSION)
+	docker tag $(OWNER)/$(SERVICE):$(VERSION) $(OWNER)/$(SERVICE):latest
+	docker push $(OWNER)/$(SERVICE):latest
