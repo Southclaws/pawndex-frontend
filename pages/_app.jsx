@@ -1,6 +1,8 @@
 import React from 'react';
 import App, { Container } from 'next/app';
 import Link from 'next/link';
+import Router from 'next/router';
+import withGA from 'next-ga';
 import { Grid, Container as GridContainer, Header } from 'semantic-ui-react';
 import fetch from 'isomorphic-unfetch';
 
@@ -52,4 +54,4 @@ class MyApp extends App {
   }
 }
 
-export default MyApp;
+export default withGA('UA-78828365-10', Router)(MyApp);
