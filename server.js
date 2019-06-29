@@ -1,31 +1,38 @@
-const { createServer } = require('http');
-const { parse } = require('url');
+const express = require('express');
 const next = require('next');
-const pathMatch = require('path-match');
 
-const port = parseInt(process.env.PORT, 10) || 3000;
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
-const route = pathMatch();
-const match = route('/:user/:repo');
 
-app.prepare().then(() => {
-  createServer((req, res) => {
-    const { pathname } = parse(req.url, true);
-    const params = match(pathname);
-    if (params === false) {
-      handle(req, res);
-      return;
-    }
-    // assigning `query` into the params means that we still
-    // get the query string passed to our application
-    // i.e. /blog/foo?show-comments=true
-    app.render(req, res, '/', Object.assign(params));
-  }).listen(port, (err) => {
-    if (err) {
-      throw err;
-    }
-    console.log(`> Ready on http://localhost:${port}`);
+app
+  .prepare()
+  .then(() => {
+    const server = express();
+
+    server.get('/p/:id', (req, res) => {
+      const actualPage = '/post';
+      const queryParams = { title: req.params.id };
+      app.render(req, res, actualPage, queryParams);
+    });
+
+    server.get('/pkg/:user/:repo', (req, res) => {
+      return app.render(req, res, '/package', {
+        user: req.params.user,
+        repo: req.params.repo
+      });
+    });
+
+    server.get('*', (req, res) => {
+      return handle(req, res);
+    });
+
+    server.listen(3000, (err) => {
+      if (err) throw err;
+      console.log('> Ready on http://localhost:3000');
+    });
+  })
+  .catch((ex) => {
+    console.error(ex.stack);
+    process.exit(1);
   });
-});

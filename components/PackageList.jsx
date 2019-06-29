@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Grid, Input, Checkbox, Radio, List, Segment, Loader } from 'semantic-ui-react';
+import Link from 'next/link';
 import * as moment from 'moment';
 import * as Fuse from 'fuse.js';
 
@@ -157,9 +158,14 @@ export default class PackageList extends React.Component {
               {icon}
               <List.Content>
                 <List.Header>
-                  <a href={`/${value.user}/${value.repo}`}>
-                    {value.user}/{value.repo}
-                  </a>
+                  <Link
+                    as={`/pkg/${value.user}/${value.repo}`}
+                    href={`/package?user=${value.user}&repo=${value.repo}`}
+                  >
+                    <a>
+                      {value.user}/{value.repo}
+                    </a>
+                  </Link>
                 </List.Header>
                 <List.Description>{description}</List.Description>
               </List.Content>
@@ -172,7 +178,7 @@ export default class PackageList extends React.Component {
 
   render() {
     return (
-      <Grid>
+      <>
         <Grid.Row>
           <Grid.Column width={6}>
             <Input
@@ -228,7 +234,7 @@ export default class PackageList extends React.Component {
             {this.state.error !== '' ? this.renderError(this.state.error) : this.renderList()}
           </Grid.Column>
         </Grid.Row>
-      </Grid>
+      </>
     );
   }
 }
