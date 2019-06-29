@@ -3,22 +3,8 @@ import { Grid, Input, Checkbox, Radio, List, Segment, Loader } from 'semantic-ui
 import * as moment from 'moment';
 import * as Fuse from 'fuse.js';
 
-import { Package } from '../types/Package';
-
-interface Props {
-  list?: Package[];
-  onClick: Function;
-}
-interface State {
-  error: string;
-  query: string;
-  lastInput: number;
-  fullOnly: boolean;
-  sort: 'date' | 'stars' | 'rel';
-}
-
-export default class PackageList extends React.Component<Props, State> {
-  constructor(props: Props) {
+export default class PackageList extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       error: '',
@@ -29,19 +15,19 @@ export default class PackageList extends React.Component<Props, State> {
     };
   }
 
-  onQuery(query: string) {
+  onQuery(query) {
     this.setState({ query: query });
   }
 
-  onFilter(filter: boolean) {
+  onFilter(filter) {
     this.setState({ fullOnly: filter });
   }
 
-  onSort(value: 'date' | 'stars' | 'rel') {
+  onSort(value) {
     this.setState({ sort: value });
   }
 
-  filterList(list: Package[]) {
+  filterList(list) {
     if (this.state.query !== '') {
       let fuse = new Fuse(list, {
         shouldSort: true,
@@ -55,7 +41,7 @@ export default class PackageList extends React.Component<Props, State> {
       list = fuse.search(this.state.query);
     }
 
-    let result = list.filter((value, index, array) => {
+    let result = list.filter((value) => {
       if (this.state.fullOnly) {
         return value.classification === 'full';
       } else {
@@ -66,12 +52,12 @@ export default class PackageList extends React.Component<Props, State> {
     return result;
   }
 
-  sortList(list: Package[]) {
+  sortList(list) {
     let result;
 
     switch (this.state.sort) {
       case 'date':
-        result = list.sort((a: Package, b: Package) => {
+        result = list.sort((a, b) => {
           if (a.updated > b.updated) {
             return -1;
           } else if (a.updated < b.updated) {
@@ -82,7 +68,7 @@ export default class PackageList extends React.Component<Props, State> {
         break;
 
       case 'stars':
-        result = list.sort((a: Package, b: Package) => {
+        result = list.sort((a, b) => {
           if (a.stars > b.stars) {
             return -1;
           } else if (a.stars < b.stars) {
@@ -100,7 +86,7 @@ export default class PackageList extends React.Component<Props, State> {
     return result;
   }
 
-  renderError(message: string) {
+  renderError(message) {
     return (
       <Segment inverted color="red">
         <p>{message}</p>
@@ -120,8 +106,8 @@ export default class PackageList extends React.Component<Props, State> {
           <List.Header>{list.length} Packages</List.Header>
         </List.Item>
 
-        {list.map((value: Package, index: number, array: Package[]) => {
-          let icon: JSX.Element;
+        {list.map((value, index) => {
+          let icon;
 
           switch (value.classification) {
             case 'full':
@@ -171,11 +157,7 @@ export default class PackageList extends React.Component<Props, State> {
               {icon}
               <List.Content>
                 <List.Header>
-                  <a
-                    onClick={() => {
-                      this.props.onClick(route);
-                    }}
-                  >
+                  <a href={`/${value.user}/${value.repo}`}>
                     {value.user}/{value.repo}
                   </a>
                 </List.Header>
@@ -197,7 +179,7 @@ export default class PackageList extends React.Component<Props, State> {
               icon="search"
               placeholder="Search..."
               onChange={(e) => {
-                this.onQuery((e.target as HTMLInputElement).value);
+                this.onQuery(e.target.value);
               }}
             />
           </Grid.Column>

@@ -1,12 +1,7 @@
 import * as React from 'react';
-import Document, { Head, Main, NextScript } from 'next/document';
+import Document, { Html, Head, Main, NextScript } from 'next/document';
 
 export default class extends Document {
-  // static async getInitialProps(ctx) {
-  //     const initialProps = await Document.getInitialProps(ctx);
-  //     return { ...initialProps };
-  // }
-
   render() {
     return (
       <html>
@@ -21,7 +16,7 @@ export default class extends Document {
           />
           <title>Pawndex - The Pawn Package Index</title>
         </Head>
-        <body className="custom_class">
+        <body>
           <Main />
           <NextScript />
         </body>

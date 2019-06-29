@@ -3,39 +3,13 @@ import { Grid, Loader, Icon, Dropdown, DropdownProps, Label } from 'semantic-ui-
 import * as moment from 'moment';
 import { InteractiveForceGraph, ForceGraphNode, ForceGraphArrowLink } from 'react-vis-force';
 
-import { Package } from '../types/Package';
-
-interface GraphNode {
-  id: string;
-  group: number;
-}
-
-interface GraphLink {
-  source: string;
-  target: string;
-  value: number;
-}
-
-interface GraphData {
-  nodes: GraphNode[];
-  links: GraphLink[];
-}
-
-interface Props {
-  pkg?: Package;
-  all?: Package[];
-}
-interface State {
-  selectedVersion?: string;
-}
-
-export default class extends React.Component<Props, State> {
-  constructor(props: Props) {
+export default class extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {};
   }
 
-  pkgFromName(name: string, list: Package[]): Package | undefined {
+  pkgFromName(name, list) {
     let split = name.split('/');
     if (split.length !== 2) {
       return undefined;
@@ -53,19 +27,19 @@ export default class extends React.Component<Props, State> {
     return undefined;
   }
 
-  buildTree(list: Package[]): GraphData | undefined {
+  buildTree(list) {
     if (this.props.pkg === undefined) {
       return undefined;
     }
 
-    let result: GraphData = {
+    let result = {
       nodes: [],
       links: []
     };
 
     let visited = new Object();
 
-    let recurse = (pkgName: string, depth: number) => {
+    let recurse = (pkgName, depth) => {
       if (visited[pkgName] !== true) {
         result.nodes.push({
           id: pkgName,
@@ -115,7 +89,7 @@ export default class extends React.Component<Props, State> {
             radiusMargin: 100
           }}
         >
-          {tree.nodes.map((value: GraphNode, index: number, array: GraphNode[]) => {
+          {tree.nodes.map((value, index) => {
             let r = index === 0 ? 10 : 7.5;
             r -= value.group;
             if (r < 2) {
@@ -129,7 +103,7 @@ export default class extends React.Component<Props, State> {
 
             return <ForceGraphNode key={index} node={{ id: value.id }} fill={fill} r={r} />;
           })}
-          {tree.links.map((value: GraphLink, index: number, array: GraphLink[]) => {
+          {tree.links.map((value, index) => {
             return (
               <ForceGraphArrowLink
                 key={index}
@@ -144,22 +118,17 @@ export default class extends React.Component<Props, State> {
       );
     }
 
-    let selectedVersion: string | undefined;
+    let selectedVersion;
     if (this.state.selectedVersion !== undefined) {
       selectedVersion = this.state.selectedVersion;
     } else if (this.props.pkg.tags !== null) {
       selectedVersion = this.props.pkg.tags[0];
     }
 
-    let dropdownTags:
-      | undefined
-      | {
-          text: string;
-          value: string;
-        }[] = undefined;
+    let dropdownTags = undefined;
 
     if (this.props.pkg.tags !== null) {
-      dropdownTags = this.props.pkg.tags.map((value: string, index: number, array: string[]) => {
+      dropdownTags = this.props.pkg.tags.map((value) => {
         return {
           text: value,
           value: value
@@ -184,9 +153,9 @@ export default class extends React.Component<Props, State> {
                 <Dropdown
                   inline
                   defaultValue={dropdownTags[0].value}
-                  onChange={(event: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
+                  onChange={(_, data) => {
                     this.setState({
-                      selectedVersion: data.value as string
+                      selectedVersion: data.value
                     });
                   }}
                   options={dropdownTags}
