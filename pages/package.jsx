@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Head from 'next/head';
+import NextSeo from 'next-seo';
 import * as moment from 'moment';
-import { Container, Grid, Loader, Icon, Dropdown, DropdownProps, Label } from 'semantic-ui-react';
+import { Container, Grid, Icon, Dropdown, Label } from 'semantic-ui-react';
 import { InteractiveForceGraph, ForceGraphNode, ForceGraphArrowLink } from 'react-vis-force';
 
 const pkgFromName = (name, list) => {
@@ -166,7 +166,13 @@ const Page = ({ user, repo, list, error }) => {
 
   return (
     <>
-      <Head title={`${pkg.user}/${pkg.repo} | Pawndex - The Pawn Package Index`} />
+      <NextSeo
+        config={{
+          title: `${pkg.user}/${pkg.repo} | Pawndex - The Pawn Package Index`,
+          description: `Dependency graph and version history for ${pkg.user}/${pkg.repo}.`,
+          canonical: `https://packages.sampctl.com/pkg/${pkg.user}/${pkg.repo}`
+        }}
+      />
 
       <Grid.Row>
         <Grid.Column>

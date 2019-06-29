@@ -3,6 +3,7 @@ import App, { Container } from 'next/app';
 import Link from 'next/link';
 import Router from 'next/router';
 import withGA from 'next-ga';
+import NextSeo from 'next-seo';
 import { Grid, Container as GridContainer, Header } from 'semantic-ui-react';
 import fetch from 'isomorphic-unfetch';
 
@@ -30,6 +31,14 @@ class MyApp extends App {
 
     return (
       <Container>
+        <NextSeo
+          config={{
+            title: 'Pawndex - The Pawn Package Index',
+            description: 'An index of all packages on GitHub for the Pawn scripting language.',
+            canonical: 'https://packages.sampctl.com/'
+          }}
+        />
+
         <GridContainer>
           <Grid relaxed divided>
             <Grid.Row />

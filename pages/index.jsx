@@ -1,5 +1,4 @@
 import React from 'react';
-import Head from 'next/head';
 import { Icon, Grid, Container } from 'semantic-ui-react';
 
 import PackageList from '../components/PackageList';
@@ -14,8 +13,6 @@ const Index = ({ list, error }) => {
 
   return (
     <>
-      <Head title="Pawndex - The Pawn Package Index" />
-
       <Grid.Row>
         <Container>
           <p>This index lists valid Pawn packages from GitHub.</p>
