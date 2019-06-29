@@ -1,9 +1,9 @@
-import * as React from "react";
-import { Grid, Loader, Icon, Dropdown, DropdownProps, Label } from "semantic-ui-react";
-import * as moment from "moment";
-import { InteractiveForceGraph, ForceGraphNode, ForceGraphArrowLink } from "react-vis-force";
+import * as React from 'react';
+import { Grid, Loader, Icon, Dropdown, DropdownProps, Label } from 'semantic-ui-react';
+import * as moment from 'moment';
+import { InteractiveForceGraph, ForceGraphNode, ForceGraphArrowLink } from 'react-vis-force';
 
-import { Package } from "../types/Package";
+import { Package } from '../types/Package';
 
 interface GraphNode {
   id: string;
@@ -36,7 +36,7 @@ export default class extends React.Component<Props, State> {
   }
 
   pkgFromName(name: string, list: Package[]): Package | undefined {
-    let split = name.split("/");
+    let split = name.split('/');
     if (split.length !== 2) {
       return undefined;
     }
@@ -92,7 +92,7 @@ export default class extends React.Component<Props, State> {
       }
     };
 
-    recurse(this.props.pkg.user + "/" + this.props.pkg.repo, 0);
+    recurse(this.props.pkg.user + '/' + this.props.pkg.repo, 0);
 
     return result;
   }
@@ -173,14 +173,14 @@ export default class extends React.Component<Props, State> {
           <Grid.Column>
             <p>
               {`${this.props.pkg.stars} stars, updated ${moment(this.props.pkg.updated).fromNow()}`}
-              {" - "}
+              {' - '}
               <a href={`https://github.com/${this.props.pkg.user}/${this.props.pkg.repo}`}>
                 View on <Icon name="github" size="large" />
               </a>
             </p>
             {dropdownTags === undefined ? null : (
               <p>
-                Version:{" "}
+                Version:{' '}
                 <Dropdown
                   inline
                   defaultValue={dropdownTags[0].value}
@@ -194,21 +194,23 @@ export default class extends React.Component<Props, State> {
               </p>
             )}
             <p>
-              <Label style={{ fontFamily: "monospace" }}>
-                <p style={{ userSelect: "all", display: "inline" }}>
+              <Label style={{ fontFamily: 'monospace' }}>
+                <p style={{ userSelect: 'all', display: 'inline' }}>
                   {`sampctl package install ${this.props.pkg.user}/${this.props.pkg.repo}` +
-                    (selectedVersion !== undefined ? ":" + selectedVersion : "")}
+                    (selectedVersion !== undefined ? ':' + selectedVersion : '')}
                 </p>
               </Label>
             </p>
             <p>
               {this.props.pkg.dependencies === undefined
-                ? "No dependencies listed"
+                ? 'No dependencies listed'
                 : `Depends on ${this.props.pkg.dependencies.length} packages`}
             </p>
           </Grid.Column>
         </Grid.Row>
-        <Grid.Row>{this.props.pkg.dependencies === undefined ? null : <Grid.Column>{graph}</Grid.Column>}</Grid.Row>
+        <Grid.Row>
+          {this.props.pkg.dependencies === undefined ? null : <Grid.Column>{graph}</Grid.Column>}
+        </Grid.Row>
       </Grid>
     );
   }
