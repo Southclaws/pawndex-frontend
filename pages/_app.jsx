@@ -1,9 +1,9 @@
 import React from 'react';
-import App, { Container } from 'next/app';
+import App from 'next/app';
 import Link from 'next/link';
 import Router from 'next/router';
 import withGA from 'next-ga';
-import NextSeo from 'next-seo';
+import { NextSeo } from 'next-seo';
 import { Grid, Container as GridContainer, Header } from 'semantic-ui-react';
 import fetch from 'isomorphic-unfetch';
 
@@ -26,11 +26,10 @@ class MyApp extends App {
   }
 
   render() {
-    console.log(this);
     const { Component, pageProps } = this.props;
 
     return (
-      <Container>
+      <>
         <NextSeo
           config={{
             title: 'Pawndex - The Pawn Package Index',
@@ -58,7 +57,7 @@ class MyApp extends App {
             <Component {...pageProps} />
           </Grid>
         </GridContainer>
-      </Container>
+      </>
     );
   }
 }

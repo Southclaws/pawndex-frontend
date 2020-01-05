@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import NextSeo from 'next-seo';
+import { NextSeo } from 'next-seo';
 import * as moment from 'moment';
 import { Container, Grid, Icon, Dropdown, Label } from 'semantic-ui-react';
 import { InteractiveForceGraph, ForceGraphNode, ForceGraphArrowLink } from 'react-vis-force';
